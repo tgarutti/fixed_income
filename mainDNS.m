@@ -89,11 +89,11 @@ set(gca,'FontSize',16)
 set(gca,'FontName','Times New Roman')
 
 %% Find lambda that maximises curvature factor loading
-N            = 100000;
+N            = 10000;
 B            = zeros(size(yieldData,1),3,N);
 betaLoadings = zeros(3,size(yieldData,2),N);
 betaLoadingMeans = zeros(3,100);
-lambda       = linspace(0.01,5,N);
+lambda       = linspace(0.001,1,N);
 maxBThree    = zeros(1,N);
 
 for i=1:N
@@ -120,8 +120,28 @@ lambdaDiLi      = lambda(j);
 lambdaAvg23     = lambda(i);
 lambdaMax       = lambda(k);
 
+figure
+plot(lambda,avgBThree,'Color','b','LineWidth',1.5)
+hold on
+plot(lambda,avg23BThree,'Color','r','LineWidth',1.5)
+plot(lambda,thirtyBThree,'Color','g','LineWidth',1.5)
+grid on
+title('Estimated $\hat{\beta}_{3t}$ against Parameter $\lambda_t$',...
+    'FontSize',30,'bold','Interpreter','latex')
+ylabel('$\hat{\beta}_{3t}$ Factor','FontSize',14,'FontWeight','bold','Color','k',...
+    'Interpreter','latex')
+xlabel('$\lambda_t$','FontSize',14,'Interpreter','latex')
+legend({'Average $\hat{\beta}_{3t}$, All Maturities',...
+    'Average $\hat{\beta}_{3t}$, 2-3 Years',...
+    '$\hat{\beta}_{3t}$, 2.5 Years (30 Months)'},'Interpreter','latex',...
+    'Location','northeast');
+set(gca,'FontSize',16)
+set(gca,'FontName','Times New Roman')
+
+%% We use the Diebold and Li value of 0.0597 for modelling/forecasting
+
 %% Estimate a Dynamic Nelson-Siegel Model
  
 mdl = varm(size(yields,2),1);
 estMdl = estimate(mdl,[yields]);
-summarize(estMdl);
+%summarize(estMdl);
