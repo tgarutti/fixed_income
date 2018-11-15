@@ -139,9 +139,30 @@ set(gca,'FontSize',16)
 set(gca,'FontName','Times New Roman')
 
 %% We use the Diebold and Li value of 0.0597 for modelling/forecasting
+forecastedYieldsAR = zeros(13,36,3);
+forecastedYieldsVAR = zeros(13,36,3);
+forecastedYieldsDNS = zeros(13,36,3);
 
-%% Estimate a Dynamic Nelson-Siegel Model
- 
-mdl = varm(size(yields,2),1);
-estMdl = estimate(mdl,[yields]);
-%summarize(estMdl);
+tau13 = [3, 6, 9, 12, 24, 60, 120, 240]; 
+
+% Moving window forecasts
+for i=1:36
+    t = i-1;
+    T = size(yields,1);
+    arForecasts = ARForecast(yields(1+t:T-(36-t),:));
+    varForecasts = VARForecast(yields(1+t:T-(36-t),:));
+    dnsForecasts = DNS(yields(1+t:T-(36-t),:)')';
+    for j=1:3
+        forecastedYieldsAR(:,i,j) = arForecasts(:,j);
+        forecastedYieldsVAR(:,i,j) = varForecasts(:,j);
+        forecastedYieldsDNS(:,i,j) = dnsForecasts(:,j);
+    end
+end
+
+%% Mean Forecast Errors
+
+% 1-step ahead
+
+%mse_1 = zeros(13,2);
+
+%mse_1(
